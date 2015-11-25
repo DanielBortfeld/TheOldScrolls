@@ -1,4 +1,5 @@
-﻿using RougeLikeAttempt4.Game.Entities;
+﻿using RougeLikeAttempt4.Game;
+using RougeLikeAttempt4.Game.Entities;
 using RougeLikeAttempt4.Game.Entities.Cake;
 using RougeLikeAttempt4.Game.Entities.Items;
 using RougeLikeAttempt4.Game.Map.Doors;
@@ -37,6 +38,21 @@ namespace RougeLikeAttempt4
                 this.Name = name;
 
             PlayerCollisionManager.OnEntityCollision += OnEntityCollision;
+            TestingDevice.GodMode += TestingDevice_GodMode;
+        }
+
+        private void TestingDevice_GodMode(object sender, GodModeEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case GodModeActions.ToggleCollision:
+                    // 
+                    break;
+                case GodModeActions.AddItem:
+                    break;
+                default:
+                    break;
+            }
         }
 
         public override void OnEntityCollision(Entity entity)
@@ -57,6 +73,8 @@ namespace RougeLikeAttempt4
 
         public void ProcessInput()
         {
+            PlayerCollisionManager.CheckCollision(this);
+
             ConsoleKeyInfo keyInfo = Console.ReadKey(true);
             switch (keyInfo.Key)
             {
@@ -105,6 +123,7 @@ namespace RougeLikeAttempt4
                     break;
                 case ConsoleKey.F10:
                     //cheat console
+                    TestingDevice.ShowConsole();
                     break;
                 default:
                     break;

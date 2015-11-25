@@ -70,6 +70,7 @@
     <Compile Include="Game\Entities\Charakters\Player\Player.cs" />
     <Compile Include="Game\Map\Wall\Wall.cs" />
     <Compile Include="Game\Entities\Charakters\Player\PlayerCollisionManager.cs" />
+    <Compile Include="Game\TestingDevice.cs" />
     <Compile Include="Vector2.cs" />
     <Compile Include="Symbols.cs" />
     <Compile Include="Program.cs" />

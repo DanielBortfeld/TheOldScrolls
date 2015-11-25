@@ -249,7 +249,7 @@ namespace RougeLikeAttempt4
         }
         private static void SetCake()
         {
-            for (int loops = 0; loops < 10; loops++)
+            for (int loops = 0; loops < 5; loops++)
             {
                 int spawnChance = Symbols.random.Next(100);
                 int randomX = Symbols.random.Next(1, Map.MapWidth - 1);
