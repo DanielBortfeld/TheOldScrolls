@@ -12,6 +12,8 @@ namespace RougeLikeAttempt4.Game.Map.Doors
         {
             this.Symbol = Symbols.DoorLocked;
             this.Color = ConsoleColor.DarkBlue;
+
+            Symbols.lockedDoorCounter++;
         }
     }
 }

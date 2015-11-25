@@ -18,6 +18,7 @@ namespace RougeLikeAttempt4
         public static Map currentMap;
         public static Player hero;
 
+        private static Map tempMap;
         private static Character defeatedCharacter;
 
         private static int mapCounter;
@@ -34,7 +35,7 @@ namespace RougeLikeAttempt4
             currentMap = new Map(Map.Screen.Title);
             Console.ReadKey(true);
 
-            currentMap = GenerateMap();
+            currentMap = GenerateMap(false);
             Legend = new Legend();
 
             hero = new Player(AskForName());
@@ -52,9 +53,9 @@ namespace RougeLikeAttempt4
 
                 hero.ProcessInput();
 
-                CheckForDoor();
+                ChangeMapOnDoorCollision();
                 
-                if (mapCounter >= 8)
+                if (mapCounter >= 10)
                     break;
 
                 foreach (var entity in Entities)
@@ -71,11 +72,7 @@ namespace RougeLikeAttempt4
             else
                 ChangeMap(new Map(Map.Screen.GameOver));
 
-            Console.ReadKey(true);
-            Console.ReadKey(true);
-            Console.ReadKey(true);
-            Console.ReadKey(true);
-            Console.ReadKey(true);
+            ReadKeyBuffer();
         }
 
         public static void Fight(Character attacker, Character other)
@@ -157,12 +154,12 @@ namespace RougeLikeAttempt4
             GameManager.WriteSubtext(1, "                                                   ");
         }
 
-        private static void CheckForDoor()
+        private static void ChangeMapOnDoorCollision()
         {
             if (currentMap.map[hero.PositionX, hero.PositionY] is Door)
             {
                 Entities.RemoveAll(T => T is Item);
-                ChangeMap(GenerateMap());
+                ChangeMap(GenerateMap(NextMapIsRandom()));
                 ShowNewScreen();
             }
         }
@@ -175,9 +172,17 @@ namespace RougeLikeAttempt4
             hero.PositionY = Symbols.random.Next(1, Map.MapHeight - 1);
         }
 
-        private static Map GenerateMap() 
+        private static bool NextMapIsRandom()
         {
-            Map tempMap = new Map();
+            if (Symbols.random.Next(3) > 0)
+                return false;
+
+            return true;
+        }
+
+        private static Map GenerateMap(bool isRandom) 
+        {
+            tempMap = new Map(isRandom);
 
             AddItems();
             AddEnemies();
@@ -329,6 +334,8 @@ namespace RougeLikeAttempt4
         }
         private static bool IsBlocked(int positionX, int positionY)
         {
+            if (!tempMap.map[positionX, positionY].IsWalkable) return true;
+
             foreach (var entity in Entities)
             {
                 if (entity.PositionX == positionX && entity.PositionY == positionY) return true;
@@ -340,6 +347,20 @@ namespace RougeLikeAttempt4
         {
             Console.WriteLine("Hi! What's ya name?");
             return Convert.ToString(Console.ReadLine());
+        }
+
+        private static void ReadKeyBuffer()
+        {
+            Console.ReadKey(true);
+            Console.ReadKey(true);
+            Console.ReadKey(true);
+            Console.ReadKey(true);
+            Console.ReadKey(true);
+            Console.ReadKey(true);
+            Console.ReadKey(true);
+            Console.ReadKey(true);
+            Console.ReadKey(true);
+            Console.ReadKey(true);
         }
     }
 }

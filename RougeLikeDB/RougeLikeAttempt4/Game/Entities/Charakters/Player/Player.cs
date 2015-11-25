@@ -41,14 +41,15 @@ namespace RougeLikeAttempt4
             TestingDevice.GodMode += TestingDevice_GodMode;
         }
 
-        private void TestingDevice_GodMode(object sender, GodModeEventArgs e)
+        private void TestingDevice_GodMode(object sender, TestingDeviceEventArgs e)
         {
             switch (e.Action)
             {
-                case GodModeActions.ToggleCollision:
-                    // 
+                case TestingDeviceActions.ToggleGodMode:
                     break;
-                case GodModeActions.AddItem:
+                case TestingDeviceActions.ToggleCollision:
+                    break;
+                case TestingDeviceActions.AddItem:
                     break;
                 default:
                     break;

@@ -58,6 +58,7 @@
     <Compile Include="Game\GameManager.cs" />
     <Compile Include="Game\GameObject.cs" />
     <Compile Include="Game\Entities\Items\Cake.cs" />
+    <Compile Include="Game\GodModeEventArgs.cs" />
     <Compile Include="Game\Map\Doors\Door.cs" />
     <Compile Include="Game\Map\Doors\DoorLocked.cs" />
     <Compile Include="Game\Map\Doors\DoorOpen.cs" />

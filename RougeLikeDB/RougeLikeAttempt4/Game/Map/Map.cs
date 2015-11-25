@@ -29,14 +29,10 @@ namespace RougeLikeAttempt4
 
         public Map(bool isRandom)
         {
-            if (isRandom)
-            {
-                InitRandom();
-                GenerateFloor();
-
-                Update();
-            }
-            else GenerateMap();
+            if (isRandom) 
+                GenerateRandomMap();
+            else 
+                GenerateMap();
         }
 
         public Map(Screen screen)
@@ -134,7 +130,6 @@ namespace RougeLikeAttempt4
                     SetMapField(0, randomY, new DoorLocked(0, randomY));
                 else if (wallChance > 75)
                     SetMapField(MapWidth - 1, randomY, new DoorLocked(MapWidth - 1, randomY));
-                Symbols.lockedDoorCounter++;
             }
             else if (doorChance >= 50 && doorChance < 90)
             {
@@ -251,10 +246,20 @@ namespace RougeLikeAttempt4
 
         private void SpreadFloor(int percent)
         {
-            for (int y = 3; y < MapHeight - 3; y++)
-                for (int x = 3; x < MapWidth - 3; x++)
+            for (int y = 2; y < MapHeight - 2; y++)
+                for (int x = 2; x < MapWidth - 2; x++)
                     if (Symbols.random.Next(100) < percent)
                         updatedMap[x, y] = new Floor(x, y);
+        }
+
+        private void GenerateRandomMap()
+        {
+            InitRandom();
+            GenerateFloor();
+
+            Update();
+
+            SetDoorInRandomMap();
         }
 
         private void GenerateFloor()
@@ -275,6 +280,33 @@ namespace RougeLikeAttempt4
                             updatedMap[x, y] = new Floor(x, y);
                     }
             }
+        }
+
+        private void SetDoorInRandomMap()
+        {
+            int positionX = Symbols.random.Next(1, Map.MapWidth - 1);
+            int positionY = Symbols.random.Next(1, Map.MapHeight - 1);
+
+            GetFreePosition(ref positionX, ref positionY);
+
+            SetMapField(positionX, positionY, new DoorLocked(positionX, positionY));
+        }
+
+        private void GetFreePosition(ref int positionX, ref int positionY)
+        {
+            while (IsBlocked(positionX, positionY))
+            {
+                positionX = Symbols.random.Next(1, Map.MapWidth - 1);
+                positionY = Symbols.random.Next(1, Map.MapHeight - 1);
+            }
+        }
+
+        private bool IsBlocked(int positionX, int positionY)
+        {
+            if (!map[positionX, positionY].IsWalkable)
+                return true;
+
+            return false;
         }
 
         private int GetFloorNeighbors(int x, int y)

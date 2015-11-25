@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RougeLikeAttempt4.Game.Entities.Items;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,34 +7,11 @@ using System.Threading.Tasks;
 
 namespace RougeLikeAttempt4.Game
 {
-    public enum GodModeActions { ToggleCollision, AddItem }
-
-    public class GodModeEventArgs : EventArgs
-    {
-        private GodModeActions action;
-
-        public GodModeActions Action
-        {
-            get { return action; }
-            set { action = value; }
-        }
-
-        private object param;
-
-        public object Param
-        {
-            get { return param; }
-            set { param = value; }
-        }
-
-    }
+    public enum TestingDeviceActions { ToggleGodMode, ToggleCollision, AddItem }
 
     public static class TestingDevice
     {
-        public static event EventHandler<GodModeEventArgs> GodMode;
-
-        private static bool godModeEnabled = false;
-        private static bool collisionEnabled = true;
+        public static event EventHandler<TestingDeviceEventArgs> GodMode;
 
         public static void ShowConsole()
         {
@@ -60,7 +38,11 @@ namespace RougeLikeAttempt4.Game
                     ToggleGodMode();
                     break;
                 case "tcl":
+                case "togglecollision":
                     ToggleCollision();
+                    break;
+                case "additem":
+                    AddItem();
                     break;
                 default:
                     break;
@@ -70,37 +52,51 @@ namespace RougeLikeAttempt4.Game
         private static void ToggleCollision()
         {
             if (GodMode != null)
-                /*
+                GodMode(null, new TestingDeviceEventArgs()
+                {
+                    Action = TestingDeviceActions.ToggleCollision
+                });
+            /*
+            Is the same as :
+            if (GodMode != null)
                 GodModeEventArgs e = new GodModeEventArgs();
                 e.Action = GodModeActions.ToggleCollision;
                 GodMode(null, e);
-                */
-                GodMode(null, new GodModeEventArgs()
-                {
-                    Action = GodModeActions.ToggleCollision
-                });
+            */
         }
 
         public static void ToggleGodMode()
         {
-            godModeEnabled = !godModeEnabled;
-
-            if (godModeEnabled)
-            {
-                GameManager.hero.Color = ConsoleColor.Red;
-                GameManager.hero.Health = 9999;
-                Player.InvLifePoints = "GodMode:";
-                GameManager.hero.Initiative = 9999;
-                GameManager.hero.
-
-            }
-            else
-            {
-                GameManager.hero.Color = ConsoleColor.Cyan;
-                GameManager.hero.Health = 3;
-                Player.InvLifePoints = "" + Symbols.ItemLifeContainer + Symbols.ItemLifeContainer + Symbols.ItemLifeContainer;
-                GameManager.hero.Initiative = 5;
-            }
+            if (GodMode != null)
+                GodMode(null, new TestingDeviceEventArgs()
+                {
+                    Action = TestingDeviceActions.ToggleGodMode
+                });
         }
+
+        public static void AddItem()
+        {
+            if (GodMode != null)
+                GodMode(null, new TestingDeviceEventArgs()
+                {
+                    Action = TestingDeviceActions.AddItem, Param = Item
+                });
+        }
+
+
+            //if (godModeEnabled)
+            //{
+            //    GameManager.hero.Color = ConsoleColor.Red;
+            //    GameManager.hero.Health = 9999;
+            //    Player.InvLifePoints = "GodMode:";
+            //    GameManager.hero.Initiative = 9999;
+            //}
+            //else
+            //{
+            //    GameManager.hero.Color = ConsoleColor.Cyan;
+            //    GameManager.hero.Health = 3;
+            //    Player.InvLifePoints = "" + Symbols.ItemLifeContainer + Symbols.ItemLifeContainer + Symbols.ItemLifeContainer;
+            //    GameManager.hero.Initiative = 5;
+            //}
     }
 }
