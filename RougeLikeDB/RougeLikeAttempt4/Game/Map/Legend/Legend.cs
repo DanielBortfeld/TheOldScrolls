@@ -76,7 +76,9 @@ namespace RougeLikeAttempt4
             WriteStringToCharAtPositon(x, y++, "O = Cake (no lie)");
             WriteStringToCharAtPositon(x, y++, Symbols.ItemKey + " = Key");
             WriteStringToCharAtPositon(x, y++, Symbols.ItemGold + " = GOLD!!!"); y++;
-            WriteStringToCharAtPositon(x, y++, "Others are enemies.");
+            WriteStringToCharAtPositon(x, y++, "R = Giant Rat");
+            WriteStringToCharAtPositon(x, y++, "G = Goblin");
+            WriteStringToCharAtPositon(x, y++, "Z = Zombie");
 
             SetInventoryText();
         }

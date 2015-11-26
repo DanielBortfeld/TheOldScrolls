@@ -12,6 +12,8 @@ namespace RougeLikeAttempt4.Game.Entities.Items
         {
             this.Symbol = Symbols.ItemGold;
             this.Color = ConsoleColor.Yellow;
+
+            this.Name = "Gold";
         }
     }
 }

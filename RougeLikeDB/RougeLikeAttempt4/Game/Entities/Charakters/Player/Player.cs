@@ -37,26 +37,62 @@ namespace RougeLikeAttempt4
             else
                 this.Name = name;
 
+            TestingDevice.TestingActions += TestingActions;
             PlayerCollisionManager.OnEntityCollision += OnEntityCollision;
-            TestingDevice.GodMode += TestingDevice_GodMode;
         }
 
-        private void TestingDevice_GodMode(object sender, TestingDeviceEventArgs e)
+        private void TestingActions(object sender, TestingDeviceEventArgs e)
         {
             switch (e.Action)
             {
                 case TestingDeviceActions.ToggleGodMode:
+                    if (TestingDevice.godModeIsEnabled)
+                        EnableGodMode();
+                    else
+                        DisableGodMode();
                     break;
                 case TestingDeviceActions.ToggleCollision:
                     break;
                 case TestingDeviceActions.AddItem:
+
+                    UpdateInventory(e.Param as Entity);
+
+                    if (e.Param is Item)
+                        GameManager.WriteSubtext(0, "1 " + ((Item)e.Param).Name + " has been added.");
+
+                    UpdateInventory(null);
+
+                    GameManager.Legend.DrawInventory();
+                    break;
+                case TestingDeviceActions.WinGame:
+                    break;
+                case TestingDeviceActions.KillAllEnemies:
+                    break;
+                case TestingDeviceActions.ClearAllItems:
+                    break;
+                case TestingDeviceActions.ClearAllEntities:
                     break;
                 default:
                     break;
             }
         }
 
-        public override void OnEntityCollision(Entity entity)
+        private void DisableGodMode()
+        {
+            this.Health = 3;
+            this.Initiative = Symbols.random.Next(4, 7);
+            this.attackStrength = 2;
+        }
+
+        private void EnableGodMode()
+        {
+            RefillLife();
+
+            this.Initiative = 9999;
+            this.attackStrength = 9999;
+        }
+
+        public void OnEntityCollision(Entity entity)
         {
             if (entity is Item)
                 UpdateInventory(entity);
@@ -74,7 +110,8 @@ namespace RougeLikeAttempt4
 
         public void ProcessInput()
         {
-            PlayerCollisionManager.CheckCollision(this);
+            if (TestingDevice.collisionIsEnabled)
+                PlayerCollisionManager.CheckCollision(this);
 
             ConsoleKeyInfo keyInfo = Console.ReadKey(true);
             switch (keyInfo.Key)
@@ -118,7 +155,7 @@ namespace RougeLikeAttempt4
                     break;
                 case ConsoleKey.C:
                 case ConsoleKey.Z:
-                    //cast spell / zap
+                    //cast spell / zap (AoE)
                     // mana?
                     CastSpellAoE(3);
                     break;
@@ -129,14 +166,14 @@ namespace RougeLikeAttempt4
                 default:
                     break;
             }
-
         }
 
         public override void Move(int directionX, int directionY)
         {
             base.Move(directionX, directionY);
 
-            PlayerCollisionManager.CheckCollision(this);
+            if (TestingDevice.collisionIsEnabled)
+                PlayerCollisionManager.CheckCollision(this);
 
             RemoveCollectedItem();
         }
@@ -174,19 +211,38 @@ namespace RougeLikeAttempt4
                 for (int x = this.PositionX - 1; x < this.PositionX + 2; x++)
                 {
                     if (GameManager.currentMap.map[x, y] is DoorLocked)
-                        if (InvKey > 0)
+                        if (InvKey > 0 || TestingDevice.godModeIsEnabled)
                         {
                             GameManager.currentMap.map[x, y] = new DoorUnlocked(x, y);
                             GameManager.currentMap.map[x, y].Draw();
 
-                            InvKey--;
+                            if (!TestingDevice.godModeIsEnabled) InvKey--;
+
                             GameManager.Legend.DrawInventory();
                         }
                 }
         }
 
+        public void RefillLife()
+        {
+            if (!TestingDevice.godModeIsEnabled) return;
+
+            for (int loop = 0; loop < 20; loop++)
+                UpdateInventory(new LifeContainer(0, 0));
+
+            UpdateInventory(null);
+
+            GameManager.Legend.DrawInventory();
+        }
+
         private void UpdateInventory(Entity entity)
         {
+            if (entity == null)
+            {
+                collectedItem = null;
+                return;
+            }
+
             if (entity is LifeContainer && Health == invMaxLife) return;
 
             if (entity is Gold)

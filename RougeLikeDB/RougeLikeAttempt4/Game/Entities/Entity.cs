@@ -8,6 +8,8 @@ namespace RougeLikeAttempt4.Game.Entities
 {
     public abstract class Entity : GameObject
     {
+        public string Name;
+
         public Entity(int positionX, int positionY) : base(positionX, positionY)
         {
         }

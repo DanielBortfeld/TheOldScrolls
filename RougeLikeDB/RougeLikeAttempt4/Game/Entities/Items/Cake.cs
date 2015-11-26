@@ -14,6 +14,8 @@ namespace RougeLikeAttempt4.Game.Entities.Cake
         {
             this.Symbol = 'O';
             this.Color = ConsoleColor.White;
+
+            this.Name = "Cake";
         }
     }
 }

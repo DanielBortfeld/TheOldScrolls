@@ -1,4 +1,5 @@
-﻿using RougeLikeAttempt4.Game.Entities;
+﻿using RougeLikeAttempt4.Game;
+using RougeLikeAttempt4.Game.Entities;
 using RougeLikeAttempt4.Game.Entities.Cake;
 using RougeLikeAttempt4.Game.Entities.Items;
 using RougeLikeAttempt4.Game.Map.Doors;
@@ -31,6 +32,10 @@ namespace RougeLikeAttempt4
         static public void RunGame()
         {
             Console.CursorVisible = false;
+
+            TestingDevice.TestingActions += TestingActions;
+
+            Console.WindowHeight = Map.MapHeight + 4;
 
             currentMap = new Map(Map.Screen.Title);
             Console.ReadKey(true);
@@ -75,6 +80,52 @@ namespace RougeLikeAttempt4
             ReadKeyBuffer();
         }
 
+        static void TestingActions(object sender, TestingDeviceEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case TestingDeviceActions.ToggleGodMode:
+                    if (TestingDevice.godModeIsEnabled)
+                        WriteSubtext(0, "god mode is enabled.");
+                    else
+                        WriteSubtext(0, "god mode is disabled.");
+                    break;
+                case TestingDeviceActions.ToggleCollision:
+                    if (TestingDevice.collisionIsEnabled)
+                        WriteSubtext(0, "collision is enabled.");
+                    else
+                        WriteSubtext(0, "collision is disabled.");
+                    break;
+                case TestingDeviceActions.AddItem:
+                    break;
+                case TestingDeviceActions.WinGame:
+                    hero.Health = 10;
+                    mapCounter = 10;
+                    break;
+                case TestingDeviceActions.LoadNextLevel:
+                    GenerateNextLevel();
+                    break;
+                case TestingDeviceActions.KillAllEnemies:
+                    Entities.RemoveAll(T => T is Enemy);
+                    ShowNewScreen();
+                    WriteSubtext(0, "removed all enemies.");
+                    break;
+                case TestingDeviceActions.ClearAllItems:
+                    Entities.RemoveAll(T => T is Item);
+                    ShowNewScreen();
+                    WriteSubtext(0, "removed all items.");
+                    break;
+                case TestingDeviceActions.ClearAllEntities:
+                    Entities.RemoveAll(T => T is Enemy);
+                    Entities.RemoveAll(T => T is Item);
+                    ShowNewScreen();
+                    WriteSubtext(0, "removed all entities.");
+                    break;
+                default:
+                    break;
+            }
+        }
+
         public static void Fight(Character attacker, Character other)
         {
             ClearSubtext();
@@ -109,6 +160,8 @@ namespace RougeLikeAttempt4
                 WriteSubtext(1, attacker.Name + " defeated " + defeatedCharacter.Name + ".");
             }
 
+            hero.RefillLife();
+
             if (hero.Health > 0)
                 Player.InvLifePoints = Player.InvLifePoints.Substring(0, hero.Health);
             else Player.InvLifePoints = "Dead";
@@ -124,16 +177,20 @@ namespace RougeLikeAttempt4
             MapField nextField = currentMap.map[positionX, positionY];
 
             foreach (var entity in Entities)
+            {
                     if (entity is Cake)
                         if (entity.PositionX == positionX && entity.PositionY == positionY)
                             return false;
+            }
 
             return nextField.IsWalkable;
         }
 
         public static void DrawCurrentField(int positionX, int positionY)
         {
-            currentMap.map[positionX, positionY].Draw();
+            MapField currentField = currentMap.map[positionX, positionY];
+
+            currentField.Draw();
         }
 
         public static void RemoveEntity(Entity entity)
@@ -151,17 +208,16 @@ namespace RougeLikeAttempt4
         public static void ClearSubtext()
         {
             GameManager.WriteSubtext(0, "                                                   ");
-            GameManager.WriteSubtext(1, "                                                   ");
+            Console.WriteLine("                                                   ");
+            Console.WriteLine("                                                   ");
         }
 
         private static void ChangeMapOnDoorCollision()
         {
+            if (!TestingDevice.collisionIsEnabled) return;
+
             if (currentMap.map[hero.PositionX, hero.PositionY] is Door)
-            {
-                Entities.RemoveAll(T => T is Item);
-                ChangeMap(GenerateMap(NextMapIsRandom()));
-                ShowNewScreen();
-            }
+                GenerateNextLevel();
         }
 
         private static void ChangeMap(Map nextMap)
@@ -189,6 +245,13 @@ namespace RougeLikeAttempt4
 
             mapCounter++;
             return tempMap;
+        }
+
+        private static void GenerateNextLevel()
+        {
+            Entities.RemoveAll(T => T is Item);
+            ChangeMap(GenerateMap(NextMapIsRandom()));
+            ShowNewScreen();
         }
 
         private static void ShowNewScreen()

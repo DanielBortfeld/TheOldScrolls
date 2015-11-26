@@ -2,18 +2,17 @@
 using System.Collections.Generic;
 using RougeLikeAttempt4.Game.Entities;
 using System.Diagnostics;
+using RougeLikeAttempt4.Game;
 
 namespace RougeLikeAttempt4
 {
     abstract class Character : Entity
     {
-        public string Name;
         public int Health;
         public int Initiative;
 
         private int lastPositionX;
         private int lastPositionY;
-
 
         protected int attackStrength;
 
@@ -21,10 +20,6 @@ namespace RougeLikeAttempt4
         {
             this.PositionX = positionX;
             this.PositionY = positionY;
-        }
-
-        public virtual void OnEntityCollision(Entity entity)
-        {
         }
 
         public virtual void Attack(Character otherCharakter)
@@ -57,8 +52,9 @@ namespace RougeLikeAttempt4
 
         public virtual void Move(int directionX, int directionY)
         {
-            if (!GameManager.IsWalkable(this.PositionX + directionX, this.PositionY + directionY))
-                return;
+            if (this is Player && TestingDevice.collisionIsEnabled)
+                if (!GameManager.IsWalkable(this.PositionX + directionX, this.PositionY + directionY))
+                    return;
 
             lastPositionX = this.PositionX;
             lastPositionY = this.PositionY;
@@ -70,7 +66,10 @@ namespace RougeLikeAttempt4
         public override void Draw()
         {
             base.Draw();
-            GameManager.DrawCurrentField(lastPositionX, lastPositionY);
+
+            if (lastPositionX >= 0 && lastPositionX < Map.MapWidth)
+                if (lastPositionY >= 0 && lastPositionY < Map.MapHeight)
+                    GameManager.DrawCurrentField(lastPositionX, lastPositionY);
 
             Debug.Print("{2} drawn at: X: {0} Y: {1}", PositionX, PositionY, Name);
         }

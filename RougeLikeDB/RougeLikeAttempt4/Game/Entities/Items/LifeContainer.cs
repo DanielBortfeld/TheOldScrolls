@@ -12,6 +12,8 @@ namespace RougeLikeAttempt4.Game.Entities.Items
         {
             this.Symbol = Symbols.ItemLifeContainer;
             this.Color = ConsoleColor.Red;
+
+            this.Name = "Life Container";
         }
     }
 }

@@ -7,11 +7,14 @@ using System.Threading.Tasks;
 
 namespace RougeLikeAttempt4.Game
 {
-    public enum TestingDeviceActions { ToggleGodMode, ToggleCollision, AddItem }
+    public enum TestingDeviceActions { ToggleGodMode, ToggleCollision, AddItem, LoadNextLevel, WinGame, KillAllEnemies, ClearAllItems, ClearAllEntities }
 
     public static class TestingDevice
     {
-        public static event EventHandler<TestingDeviceEventArgs> GodMode;
+        public static bool collisionIsEnabled = true;
+        public static bool godModeIsEnabled = false;
+
+        public static event EventHandler<TestingDeviceEventArgs> TestingActions;
 
         public static void ShowConsole()
         {
@@ -35,14 +38,48 @@ namespace RougeLikeAttempt4.Game
             {
                 case "tgm":
                 case "togglegodmode":
+                    godModeIsEnabled = !godModeIsEnabled;
                     ToggleGodMode();
                     break;
                 case "tcl":
                 case "togglecollision":
+                    collisionIsEnabled = !collisionIsEnabled;
                     ToggleCollision();
                     break;
-                case "additem":
-                    AddItem();
+                case "additem.key":
+                    AddItem(new Key(0,0));
+                    break;
+                case "additem.gold":
+                    AddItem(new Gold(0,0));
+                    break;
+                case "additem.lifecontainer":
+                case "additem.life":
+                    AddItem(new LifeContainer(0, 0));
+                    break;
+                case "win":
+                    WinGame();
+                    break;
+                case "next":
+                case "loadnextmap":
+                case "nextmap":
+                    LoadNextLevel();
+                    break;
+                case "killallactors":
+                case "killallenemies":
+                case "killenemies":
+                case "clearallenemies":
+                case "clearenemies":
+                    KillAllEnemies();
+                    break;
+                case "clearallitems":
+                case "clearitems":
+                    ClearAllItems();
+                    break;
+                case "clear":
+                case "clearmap":
+                case "clearall":
+                case "clearallentities":
+                    ClearAllEntities();
                     break;
                 default:
                     break;
@@ -51,8 +88,8 @@ namespace RougeLikeAttempt4.Game
 
         private static void ToggleCollision()
         {
-            if (GodMode != null)
-                GodMode(null, new TestingDeviceEventArgs()
+            if (TestingActions != null)
+                TestingActions(null, new TestingDeviceEventArgs()
                 {
                     Action = TestingDeviceActions.ToggleCollision
                 });
@@ -65,38 +102,67 @@ namespace RougeLikeAttempt4.Game
             */
         }
 
-        public static void ToggleGodMode()
+        private static void ToggleGodMode()
         {
-            if (GodMode != null)
-                GodMode(null, new TestingDeviceEventArgs()
+            if (TestingActions != null)
+                TestingActions(null, new TestingDeviceEventArgs()
                 {
                     Action = TestingDeviceActions.ToggleGodMode
                 });
         }
 
-        public static void AddItem()
+        private static void AddItem(Item param)
         {
-            if (GodMode != null)
-                GodMode(null, new TestingDeviceEventArgs()
+            if (TestingActions != null)
+                TestingActions(null, new TestingDeviceEventArgs()
                 {
-                    Action = TestingDeviceActions.AddItem, Param = Item
+                    Action = TestingDeviceActions.AddItem, Param = param
                 });
         }
 
+        private static void WinGame()
+        {
+            if (TestingActions != null)
+                TestingActions(null, new TestingDeviceEventArgs()
+                {
+                    Action = TestingDeviceActions.WinGame
+                });
+        }
 
-            //if (godModeEnabled)
-            //{
-            //    GameManager.hero.Color = ConsoleColor.Red;
-            //    GameManager.hero.Health = 9999;
-            //    Player.InvLifePoints = "GodMode:";
-            //    GameManager.hero.Initiative = 9999;
-            //}
-            //else
-            //{
-            //    GameManager.hero.Color = ConsoleColor.Cyan;
-            //    GameManager.hero.Health = 3;
-            //    Player.InvLifePoints = "" + Symbols.ItemLifeContainer + Symbols.ItemLifeContainer + Symbols.ItemLifeContainer;
-            //    GameManager.hero.Initiative = 5;
-            //}
+        private static void LoadNextLevel()
+        {
+            if (TestingActions != null)
+                TestingActions(null, new TestingDeviceEventArgs()
+                {
+                    Action = TestingDeviceActions.LoadNextLevel
+                });
+        }
+
+        private static void KillAllEnemies()
+        {
+            if (TestingActions != null)
+                TestingActions(null, new TestingDeviceEventArgs()
+                {
+                    Action = TestingDeviceActions.KillAllEnemies
+                });
+        }
+
+        private static void ClearAllItems()
+        {
+            if (TestingActions != null)
+                TestingActions(null, new TestingDeviceEventArgs()
+                {
+                    Action = TestingDeviceActions.ClearAllItems
+                });
+        }
+
+        private static void ClearAllEntities()
+        {
+            if (TestingActions != null)
+                TestingActions(null, new TestingDeviceEventArgs()
+                {
+                    Action = TestingDeviceActions.ClearAllEntities
+                });
+        }
     }
 }
