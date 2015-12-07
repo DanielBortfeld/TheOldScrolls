@@ -35,6 +35,7 @@ namespace RougeLikeAttempt4
 
             TestingDevice.TestingActions += TestingActions;
 
+
             Console.WindowHeight = Map.MapHeight + 4;
 
             currentMap = new Map(Map.Screen.Title);
