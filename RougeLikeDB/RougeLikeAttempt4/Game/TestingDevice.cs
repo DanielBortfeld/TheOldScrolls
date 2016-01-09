@@ -47,10 +47,10 @@ namespace RougeLikeAttempt4.Game
                     ToggleCollision();
                     break;
                 case "additem.key":
-                    AddItem(new Key(0,0));
+                    AddItem(new Key(0, 0));
                     break;
                 case "additem.gold":
-                    AddItem(new Gold(0,0));
+                    AddItem(new Gold(0, 0));
                     break;
                 case "additem.lifecontainer":
                 case "additem.life":
@@ -116,7 +116,8 @@ namespace RougeLikeAttempt4.Game
             if (TestingActions != null)
                 TestingActions(null, new TestingDeviceEventArgs()
                 {
-                    Action = TestingDeviceActions.AddItem, Param = param
+                    Action = TestingDeviceActions.AddItem,
+                    Param = param
                 });
         }
 
